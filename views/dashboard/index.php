@@ -31,8 +31,8 @@ require "../partial/header.php";
     Welcome <?= $_SESSION["username"] ?>
 </p>
 
-<a href="logout.php">
-    Logout
+<a href="../auth/logout.php">
+Logout
 </a>
 
 <h2>Add Task</h2>

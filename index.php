@@ -1,6 +1,9 @@
 <?php
 
-header("Location: views/dashboard/index.php"); 
+header(
+"Location: views/auth/login.php"
+);
+
 exit();
 
 ?>
