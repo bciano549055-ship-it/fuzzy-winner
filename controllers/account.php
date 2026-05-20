@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once __DIR__ . '/../public/database.config.php';
 
@@ -68,8 +69,7 @@ class AccountController {
                 $user["password"]
             )){
 
-                session_start();
-
+                
                 $_SESSION["user_id"]=
                 $user["id"];
 
@@ -85,7 +85,7 @@ class AccountController {
 
     function logout(){
 
-        session_start();
+        
 
         session_destroy();
 
