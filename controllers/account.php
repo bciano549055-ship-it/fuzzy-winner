@@ -1,6 +1,5 @@
 <?php
 
-
 require_once __DIR__ . '/../public/database.config.php';
 
 class AccountController {
@@ -12,8 +11,7 @@ class AccountController {
         $username,
         $password,
         $db_name
-    ) {
-
+    ){
         $this->conn = new mysqli(
             $server_name,
             $username,
@@ -24,16 +22,16 @@ class AccountController {
 
     function register($username,$password){
 
-        $hashedPassword=password_hash(
+        $hashedPassword = password_hash(
             $password,
             PASSWORD_DEFAULT
         );
 
-        $query="INSERT INTO accounts
-                (username,password)
-                VALUES (?,?)";
+        $query = "INSERT INTO accounts
+                  (username,password)
+                  VALUES (?,?)";
 
-        $stmt=$this->conn->prepare($query);
+        $stmt = $this->conn->prepare($query);
 
         $stmt->bind_param(
             "ss",
@@ -46,10 +44,11 @@ class AccountController {
 
     function login($username,$password){
 
-        $query="SELECT * FROM accounts
-                WHERE username=?";
+        $query = "SELECT *
+                  FROM accounts
+                  WHERE username=?";
 
-        $stmt=$this->conn->prepare($query);
+        $stmt = $this->conn->prepare($query);
 
         $stmt->bind_param(
             "s",
@@ -58,22 +57,21 @@ class AccountController {
 
         $stmt->execute();
 
-        $result=$stmt->get_result();
+        $result = $stmt->get_result();
 
-        if($result->num_rows>0){
+        if($result->num_rows > 0){
 
-            $user=$result->fetch_assoc();
+            $user = $result->fetch_assoc();
 
             if(password_verify(
                 $password,
                 $user["password"]
             )){
 
-                
-                $_SESSION["user_id"]=
+                $_SESSION["user_id"] =
                 $user["id"];
 
-                $_SESSION["username"]=
+                $_SESSION["username"] =
                 $user["username"];
 
                 return true;
@@ -83,12 +81,5 @@ class AccountController {
         return false;
     }
 
-    function logout(){
-
-        
-
-        session_destroy();
-
-        header("Location: login.php");
-    }
 }
+?>
