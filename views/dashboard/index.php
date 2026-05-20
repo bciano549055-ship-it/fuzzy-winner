@@ -2,22 +2,49 @@
 
 session_start();
 
-if (!isset($_SESSION["user_id"])) {
-    header("Location: ../login.php");
+if(!isset($_SESSION["user_id"])){
+
+    header(
+        "Location: ../auth/login.php"
+    );
+
     exit();
 }
 
 require_once "../../controllers/task.php";
 require_once "../../public/database.config.php";
 
-$taskController = new TaskController(
+$taskController =
+new TaskController(
     $SERVER_NAME,
     $USERNAME,
     $PASSWORD,
     $DB_NAME
 );
 
-$tasks = $taskController->getTasks(
+
+/* ADD TASK */
+
+if($_SERVER["REQUEST_METHOD"]=="POST"){
+
+    $title=$_POST["title"];
+    $description=$_POST["description"];
+
+    $taskController->addTask(
+        $_SESSION["user_id"],
+        $title,
+        $description
+    );
+
+    header("Location: index.php");
+    exit();
+}
+
+
+/* GET TASKS */
+
+$tasks=
+$taskController->getTasks(
     $_SESSION["user_id"]
 );
 
@@ -28,59 +55,95 @@ require "../partial/header.php";
 <h1>Dashboard</h1>
 
 <p>
-    Welcome <?= $_SESSION["username"] ?>
+Welcome:
+<?= $_SESSION["username"] ?>
 </p>
 
 <a href="../auth/logout.php">
 Logout
 </a>
 
+<hr>
+
 <h2>Add Task</h2>
 
 <form method="POST">
 
-    <input
-        type="text"
-        name="title"
-        placeholder="Task title"
-        required
-    >
+<input
+type="text"
+name="title"
+placeholder="Task title"
+required>
 
-    <textarea
-        name="description"
-        placeholder="Description"
-    ></textarea>
+<br><br>
 
-    <button type="submit">
-        Add
-    </button>
+<textarea
+name="description"
+placeholder="Task description">
+</textarea>
+
+<br><br>
+
+<button type="submit">
+Add Task
+</button>
 
 </form>
 
-<h2>Your Tasks</h2>
+<hr>
 
-<?php while ($task = $tasks->fetch_assoc()): ?>
+<h2>My Tasks</h2>
 
-<div>
+<?php
 
-    <h3>
-        <?= $task["title"] ?>
-    </h3>
+if($tasks->num_rows>0):
 
-    <p>
-        <?= $task["description"] ?>
-    </p>
+while(
+$task=$tasks->fetch_assoc()
+):
 
-    <p>
-        <?= $task["status"] ?>
-    </p>
+?>
 
-    <a href="#">Edit</a>
-    <a href="#">Delete</a>
-    <a href="#">Complete</a>
+<div
+style="
+border:1px solid black;
+padding:10px;
+margin-bottom:10px;
+"
+>
+
+<h3>
+<?= htmlspecialchars(
+$task["title"]
+) ?>
+</h3>
+
+<p>
+<?= htmlspecialchars(
+$task["description"]
+) ?>
+</p>
+
+<p>
+
+Status:
+
+<?= $task["status"] ?>
+
+</p>
 
 </div>
 
-<?php endwhile; ?>
+<?php
+
+endwhile;
+
+else:
+
+?>
+
+<p>No tasks yet.</p>
+
+<?php endif; ?>
 
 <?php require "../partial/footer.php"; ?>
