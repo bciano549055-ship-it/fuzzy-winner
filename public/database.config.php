@@ -1,8 +1,15 @@
 <?php
 
-$SERVER_NAME = "localhost";
-$USERNAME = "root";
-$PASSWORD = "";
-$DB_NAME = "task_tracking";
+$SERVER_NAME =
+getenv('SERVER_NAME') ?: "localhost";
+
+$USERNAME =
+getenv('USERNAME') ?: "root";
+
+$PASSWORD =
+getenv('PASSWORD') ?: "";
+
+$DB_NAME =
+getenv('DB_NAME') ?: "task_tracking";
 
 ?>
