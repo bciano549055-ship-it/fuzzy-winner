@@ -40,7 +40,38 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
     exit();
 }
 
+/* DELETE */
 
+if(isset($_GET["delete"])){
+
+    $taskController
+    ->deleteTask(
+        $_GET["delete"]
+    );
+
+    header(
+        "Location:index.php"
+    );
+
+    exit();
+}
+
+
+/* COMPLETE */
+
+if(isset($_GET["complete"])){
+
+    $taskController
+    ->completeTask(
+        $_GET["complete"]
+    );
+
+    header(
+        "Location:index.php"
+    );
+
+    exit();
+}
 /* GET TASKS */
 
 $tasks=
@@ -59,8 +90,12 @@ Welcome:
 <?= $_SESSION["username"] ?>
 </p>
 
-<a href="../auth/logout.php">
+<a
+class="logout"
+href="../auth/logout.php">
+
 Logout
+
 </a>
 
 <hr>
@@ -94,56 +129,68 @@ Add Task
 
 <h2>My Tasks</h2>
 
-<?php
+<?php if($tasks->num_rows > 0): ?>
 
-if($tasks->num_rows>0):
+<?php while($task = $tasks->fetch_assoc()): ?>
 
-while(
-$task=$tasks->fetch_assoc()
-):
-
-?>
-
-<div
-style="
-border:1px solid black;
-padding:10px;
-margin-bottom:10px;
-"
->
+<div class="task-card">
 
 <h3>
+
 <?= htmlspecialchars(
 $task["title"]
 ) ?>
+
 </h3>
 
 <p>
+
 <?= htmlspecialchars(
 $task["description"]
 ) ?>
+
 </p>
 
-<p>
+<p class="task-status">
 
 Status:
-
 <?= $task["status"] ?>
 
 </p>
 
+<a
+href="edit.php?id=<?= $task["id"] ?>"
+>
+Edit
+</a>
+
+|
+
+<a
+href="?delete=<?= $task["id"] ?>"
+onclick="return confirm('Delete this task?')"
+>
+Delete
+</a>
+
+|
+
+<?php if($task["status"] != "Completed"): ?>
+
+<a
+href="?complete=<?= $task["id"] ?>"
+>
+Mark Complete
+</a>
+
+<?php endif; ?>
+
 </div>
 
-<?php
+<?php endwhile; ?>
 
-endwhile;
-
-else:
-
-?>
+<?php else: ?>
 
 <p>No tasks yet.</p>
 
 <?php endif; ?>
-
-<?php require "../partial/footer.php"; ?>
